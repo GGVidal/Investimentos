@@ -9,10 +9,10 @@ const Header = () => {
         <div className="ui container">
           <div id="navbar" className="ui fixed inverted menu">
             <div className="ui container">
-              <a href="#" className="active header item">
+              <a href="#" className="header item">
                 <i className="chart line icon large"></i>
               </a>
-              <a href="#" className="active item">
+              <a href="#" className="header item">
                 Home
               </a>
             </div>
@@ -21,7 +21,7 @@ const Header = () => {
           <div className="ui text container header-text">
             <h1 className="ui header huge">
               <span id="mainText" className="cursive huge">
-                WebInvest
+                Webinvest
               </span>
             </h1>
             <div className="ui horizontal divider inverted">
