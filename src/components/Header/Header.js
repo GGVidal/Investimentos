@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from 'react-router-dom';
 
 import '../Header/header.css'
 
@@ -13,7 +14,7 @@ const Header = () => {
                 <i className="chart line icon large"></i>
               </a>
               <a href="#" className="header item">
-                Home
+                <Link to="/">Inicio</Link>
               </a>
             </div>
           </div>
