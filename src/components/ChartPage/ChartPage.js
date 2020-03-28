@@ -8,14 +8,18 @@ import {
   Tooltip
 } from "recharts";
 
-import {returnDataTesouroDireto, returnDataBitcoin, createRequest} from "./ChartHelper";
+import {
+  returnDataTesouroDireto,
+  returnDataBitcoin,
+  createRequest
+} from "./ChartHelper";
 import { useAlert } from "react-alert";
 
 const style = {
   paddingTop: "10px"
 };
 //TO DO VALIDACAO NOS CAMPOS
-const renderLineChart = (data) => (
+const renderLineChart = data => (
   <LineChart width={1500} height={500} data={data}>
     <Line type="monotone" dataKey="valor" stroke="#8884d8" />
     <CartesianGrid stroke="#ccc" />
@@ -25,42 +29,63 @@ const renderLineChart = (data) => (
   </LineChart>
 );
 
-
-
 const ChartPage = () => {
-
-  const alert = useAlert()
+  const alert = useAlert();
   const [chartData, setChartData] = useState();
   const [date, setDate] = useState("");
   const [moneyValue, setMoneyValue] = useState(0);
   const [investment, setInvestment] = useState("");
-  
+
   const onClickEvent = async () => {
-    if(moneyValue) {
-      if(date){
-        if(investment) {
+    if (moneyValue) {
+      if (date) {
+        if (investment) {
           alert.success("Aguarde o processamento do investimento");
-          setTimeout(()=> investment === 'TD'? setChartData(returnDataTesouroDireto(moneyValue,date)) : onRequest(),1000)
-          
+          setTimeout(
+            () =>
+              investment === "TD"
+                ? setChartData(returnDataTesouroDireto(moneyValue, date))
+                : onRequest(),
+            1000
+          );
         } else {
-          alert.show("Por favor preencha o tipo de investimento")
+          alert.show("Por favor preencha o tipo de investimento");
         }
       } else {
-        alert.show("Por favor preencha a data inicial")
+        alert.show("Por favor preencha a data inicial");
       }
     } else {
       alert.show("Por favor preencha o valor que deseja investir");
     }
-  }
+  };
 
-
-  const onRequest = async() => {
+  const onRequest = async () => {
     const response = await createRequest(date).get();
     setChartData(response.data.Data);
-  }
+  };
 
-  const value = investment === 'TD'? chartData : returnDataBitcoin(chartData, moneyValue);
-  console.log(value);
+  const value =
+    investment === "TD" ? chartData : returnDataBitcoin(chartData, moneyValue);
+
+  const showLastValue = () => {
+    if (value) {
+      if (value.length > 0) {
+        return value.slice(-1)[0].valor.toFixed(3);
+      }
+      return null;
+    }
+    return null;
+  };
+
+  const showYield = () => {
+    if (value) {
+      if (value.length > 0) {
+        return ((value.slice(-1)[0].valor.toFixed(3) / value[0].valor) -1).toFixed(3) * 100;
+      }
+      return null;
+    }
+    return null;
+  };
 
   return (
     <div className="ui center aligned basic segment">
@@ -82,13 +107,23 @@ const ChartPage = () => {
               <label>Tipo de investimento</label>
             </div>
             <div className="ui radio checkbox">
-              <input type="radio" value="BTC" checked={investment === 'BTC'} onChange={(radio)=> setInvestment(radio.target.value)} />
+              <input
+                type="radio"
+                value="BTC"
+                checked={investment === "BTC"}
+                onChange={radio => setInvestment(radio.target.value)}
+              />
               <label>Bitcoin</label>
             </div>
           </div>
           <div className="field">
             <div className="ui radio checkbox">
-              <input type="radio" value="TD" checked={investment === 'TD'} onChange={(radio)=> setInvestment(radio.target.value)} />
+              <input
+                type="radio"
+                value="TD"
+                checked={investment === "TD"}
+                onChange={radio => setInvestment(radio.target.value)}
+              />
               <label>Tesouro Direto</label>
             </div>
           </div>
@@ -116,6 +151,20 @@ const ChartPage = () => {
       </div>
       <div className="ui section divider"></div>
       <div className="ui vertical segment">{renderLineChart(value)}</div>
+      <div class="ui vertical stripe quote segment">
+        <div class="ui equal width stackable internally celled grid">
+          <div class="center aligned row">
+            <div class="column">
+              <h3>Seu valor hoje</h3>
+              <p>R$ {showLastValue()}</p>
+            </div>
+            <div class="column">
+              <h3>"Seu rendimento final"</h3>
+              <p>{showYield()}%</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
